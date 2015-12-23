@@ -1,0 +1,17 @@
+<h1>Exam List</h1>
+<table>
+	<tr>
+		<th>name</th>
+		<th>subject</th>
+		<th>diffculty</th>
+		<th>date</th>
+	</tr>
+	{%for exam in exams%}
+	<tr>
+		<td><a href="/data/ExamDetail/{{exam.id}}/">{{exam.name}}</a></td>
+		<td>{{exam.subject}}</td>
+		<td>{{exam.get_diffculty_display}}</td>
+		<td>{{exam.date}}</td>
+	</tr>
+	{%endfor%}
+</table>

@@ -1,0 +1,43 @@
+{%if QuestionSelect%}
+    <h1>Question Select!</h1>
+{%else%}
+    <h1>Question List</h1>
+{%endif%}
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form.as_table}}
+    <input type="submit" name ='submit' value="Submit" />
+{%if style == 'select'%}
+    {%for question in questions%}
+    		<p>{{forloop.counter}}.&nbsp{{question.question_text}}</p>
+    		{%for choice in question.choice_set.all%}
+    			{{choice.number}}:{{ choice.choice_text }}
+    		{%endfor%}
+    		<p>ans:{{question.ans}}</p>
+            {%if SelectQuestion%}
+                <input type="submit" name = 'select' value={{question.id}}>
+            {%endif%}
+    {%endfor%}                                                                                                                                              
+{%elif style == 'fill'%}
+    {%for question in questions%}
+            <p>{{forloop.counter}}.&nbsp{{question.question_text}}</p>
+            <p>{{question.ans}}</p>
+            {%if SelectQuestion%}
+                <input type="submit" name = 'select' value={{question.id}}>
+            {%endif%}
+        {%endfor%}
+{%endif%}
+</form>
+{% if questions.has_previous %}
+        <a class='paginator' title='上一页' href='?page={{ questions.previous_page_number }}'><span>&lt;&lt;</span></a>
+{% endif %}
+{% for page in questions.paginator.page_range %}
+     {% if page = questions.number %}
+         <a class='paginator_current' title='当前页:{{ page }}'><span>{{ page }}</span></a>
+     {% else %}
+         <a class='paginator' href='?page={{ page }}' title='{{ page }}'><span>{{ page }}</span></a>
+     {% endif %}
+{% endfor %}
+{% if questions.has_next %}
+     <a class='paginator' title='下一页' href='?page={{ questions.next_page_number }}'><span>&gt;&gt;</span></a>
+{% endif %}

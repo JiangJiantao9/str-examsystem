@@ -1,0 +1,28 @@
+{%if MarkSet%}
+    <h1>MarkSet for Exam</h1>
+{%else%}
+    <h1>Exam Detail</h1>
+{%endif%}
+<li>name:{{exam.name}}</li>
+<li>subject:{{exam.subject}}</li>
+<li>diffculty:{{exam.get_diffculty_display}}</li>
+<li>date:{{exam.date}}</li>
+<h2>Choice Questions:</h2>
+{%for question in choicequestions %}
+	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+    		{%for choice in question.choicequestion.choice_set.all%}
+    			{{choice.number}}:{{ choice.choice_text }}
+    		{%endfor%}
+    <p>ans:{{question.choicequestion.ans}}</p>
+    <p>mark:{{question.mark}}</p>
+{%endfor%}
+<h2>Fill Questions:</h2>
+{%for question in fillquestions %}
+	<p>{{forloop.counter}}.&nbsp{{question.fillquestion.question_text}}</p>
+    		{%for choice in question.fillquestion.choice_set.all%}
+    			{{choice.number}}:{{ choice.choice_text }}
+    		{%endfor%}
+    <p>ans:{{question.fillquestion.ans}}</p>
+    <p>mark:{{question.mark}}</p>
+{%endfor%}
+<a href="/data/ExamList/">return</a>
