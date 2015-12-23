@@ -1,12 +1,12 @@
 {% extends 'data/base.html' %}
 {%block content%}
-<h1>Regester Success!</h1>
-<p>welcome {{user.username}}!</p>
-<p>you can set up you own detail or choose to finish quick Sign</p>
+<h1>注册成功！</h1>
+<p>欢迎 {{user.username}}!</p>
+<p>你可以选择完善个人信息或立即使用本网站</p>
 {%if character = 'student'%}
-	<li><a href="{%url 'data:StudentUpdate'%}">fill in detail</a></li>
+	<li><a href="{%url 'data:StudentUpdate'%}">完善个人信息</a></li>
 {%elif character = 'teacher' %}
-	<li><a href="{%url 'data:TeacherUpdate'%}">fill in detail</a></li>
+	<li><a href="{%url 'data:TeacherUpdate'%}">完善个人信息</a></li>
 {%endif%}
-<li><a href="{%url 'data:HomePage' %}">Quick Sign</a></li>
+<li><a href="{%url 'data:HomePage' %}">立即登入</a></li>
 {%endblock%}

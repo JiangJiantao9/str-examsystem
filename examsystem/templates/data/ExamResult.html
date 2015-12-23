@@ -1,6 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title></title>
+ <!-- 新 Bootstrap 核心 CSS 文件 -->
+ <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+ <!-- 可选的Bootstrap主题文件（一般不使用） -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"></script>
+
+ <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+ <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+
+ <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
 {% extends 'data/base.html' %}
 {%block content%}
-<h1>Choice Questions:</h1>
+<h1 class="text-center">考试结果</h1>
+<h4>选择题:</h4>
 {%for question in choicequestions %}
     <p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
             {%for choice in question.choicequestion.choice_set.all%}
@@ -9,19 +28,21 @@
     <p>ans:{{question.choicequestion.ans}}</p>
     <p>mark:{{question.mark}}</p>
 {%endfor%} 
-<h2>your answer</h2>                      
+<h4>你的答案</h4>                      
 {%for ans in anslist%}
 	<li>{{forloop.counter}}--{{ans}}</li>
 {%endfor%}
-<h2>result</h2>
+<h4>结果</h4>
 {%for result in resultlist%}
 	<li>{{forloop.counter}}--{{result}}</li>
 {%endfor%}
-<h2>score</h2>
-<p>num :{{num}}</p>
-<p>score :{{score}}</p>
+<h4>分数</h4>
+<p>题号:{{num}}</p>
+<p>得分 :{{score}}</p>
 <form action="" method="POST">
 	{% csrf_token %}
-	<input type="submit" value="save" name ='save'>	
+	<button type="submit" class="btn btn-primary center-block">保存</button>
 </form>
 {%endblock%}
+</body>
+</html>

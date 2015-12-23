@@ -1,14 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title></title>
+ <!-- 新 Bootstrap 核心 CSS 文件 -->
+ <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+ <!-- 可选的Bootstrap主题文件（一般不使用） -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"></script>
+
+ <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+ <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+
+ <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+
 {% extends 'data/base.html' %}
 {%block content%}
-<h1>UserDetail</h1>
-<li>userid:{{user.id}}</li>
-<li>name:{{user.username}}</li>
-<li>character:{{user.groups.all|first}}</li>
-<li>num:{{detail.num}}</li>
-<li>age:{{detail.age}}</li>
-<li>sex:{{detail.sex}}</li>
-<li>birth:{{detail.birth}}</li>
-<li>cillege:{{detail.college}}</li>
-<li>tel:{{detail.tel}}</li>
-<li>email:{{detail.email}}</li>
+
+
+<nav style="text-align: center">
+<h2>用户信息</h2>
+<ul class="list-unstyled">
+<dl>
+
+<li><h4>用户名:{{user.username}}</h4></li>
+<li><h4>身份:{{user.groups.all|first}}</h4></li>
+<li><h4>学号:{{detail.num}}</h4></li>
+<li><h4>年龄:{{detail.age}}</h4></li>
+<li><h4>性别:{{detail.get_sex_display}}</h4></li>
+<li><h4>生日:{{detail.birth}}</h4></li>
+<li><h4>学院:{{detail.college}}</h4></li>
+<li><h4>电话:{{detail.tel}}</h4></li>
+<li><h4>Email:{{detail.email}}</h4></li>
+</dl>
+</ul>
+</nav>
 {%endblock%}
+
+</body>
+</html>

@@ -11,16 +11,21 @@ urlpatterns = [
     #user
     url(r'^StudentUpdate/$', views.StudentUpdate, name='StudentUpdate'),
     url(r'^TeacherUpdate/$', views.TeacherUpdate, name='TeacherUpdate'),
+    url(r'^ChooseTeacher/$',views.ChooseTeacher,name = 'ChooseTeacher'),
+    url(r'^StudentList/$',views.StudentList,name = 'StudentList'),
     url(r'^NewUser/$',views.NewUser,name = 'NewUser'),
     url(r'^Login/$',views.Login,name = 'Login'),
+
     #url(r'^UserDetail/$',views.UserDetail,name = 'UserDetail'),
     url(r'^UserDetail/(?P<pk>[^/]+)/$',views.UserDetail,name = 'UserDetail'),
     url(r'^Logout/$',views.Logout,name = 'Logout'),
     #questions
     url(r'^choiceQ/$', views.get_choicequestion, name='get_choicequestion'),
     url(r'^fillQ/$', views.get_fillquestion, name='get_fillquestion'),
+    url(r'^tfQ/$', views.get_tfquestion, name='get_tfquestion'),
+    url(r'^saQ/$', views.get_saquestion, name='get_saquestion'),
     url(r'^Questionlist/$', views.Questionlist, name='Questionlist'),
-    url(r'^Questionlist/(?P<point>[^/]+)/(?P<style>[a-z]+)/$', views.Questionlist, name='Questionlist'),
+    #url(r'^Questionlist/(?P<point>[^/]+)/(?P<style>[a-z]+)/$', views.Questionlist, name='Questionlist'),
    
     #exam   
     url(r'^AddExam/$',views.AddExam,name = 'AddExam'),
@@ -28,11 +33,22 @@ urlpatterns = [
     url(r'^AddExam/(?P<pk>[^/]+)/Questionlist/(?P<point>[^/]+)/(?P<style>[a-z]+)/$', views.SelectQuestion, name='SelectQuestion'),
     url(r'^SetMark/(?P<pk>[^/]+)/SetMark$',views.SetMark,name = 'SetMark'),
     url(r'^ExamList/$',views.ExamList,name = 'ExamList'),
+    url(r'^SetExamVisiable/(?P<pk>[0-9]+)/$',views.SetExamVisiable,name = 'SetExamVisiable'),
     url(r'^ExamDetail/(?P<pk>[0-9]+)/$',views.ExamDetail,name = 'ExamDetail'),
+    #test
+    url(r'^NewTest/$',views.NewTest,name = 'NewTest'),
+    url(r'^ChooseExam/(?P<pk>[0-9]+)/$',views.ChooseExam,name = 'ChooseExam'),
+    url(r'^TestList/$',views.TestList,name = 'TestList'),
+    url(r'^TestDetail/(?P<pk>[0-9]+)/$',views.TestDetail,name = 'TestDetail'),
+    url(r'^TestLogList/$',views.TestLogList,name = 'TestLogList'),
+    url(r'^AnswerTest/(?P<pk>[0-9]+)/$',views.AnswerTest,name = 'AnswerTest'),
+    url(r'^TestReport/(?P<pk>[0-9]+)/$',views.TestReport,name = 'TestReport'),
     #answer
     url(r'^AnswerExam/(?P<pk>[0-9]+)/$',views.AnswerExam,name = 'AnswerExam'),
+    url(r'^verifyAnswer/(?P<pk>[0-9]+)/$',views.verify_Answer,name = 'verify_Answer'),
     url(r'^ExamResult/(?P<pk>[0-9]+)/$',views.ExamResult,name = 'ExamResult'),
     url(r'^ResultDetail/(?P<pk>[0-9]+)/$',views.ResultDetail,name = 'ResultDetail'),
+    url(r'^JudgeAnswer/(?P<pk>[0-9]+)/$',views.JudgeAnswer,name = 'JudgeAnswer'),
     url(r'^ResultList/$',views.ResultList,name = 'ResultList'),
     ]
 

@@ -1,32 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title></title>
+ <!-- 新 Bootstrap 核心 CSS 文件 -->
+ <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+ <!-- 可选的Bootstrap主题文件（一般不使用） -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"></script>
+
+ <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+ <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+
+ <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
 {% extends 'data/base.html' %}
 {%block content%}
-<h1>Set Mark for Exam</h1>
-<li>name:{{exam.name}}</li>
-<li>subject:{{exam.subject}}</li>
-<li>diffculty:{{exam.get_diffculty_display}}</li>
-<li>date:{{exam.date}}</li>
-<h2>Choice Questions:</h2>
+<h1 class="text-center">试卷分数设置</h1>
+<ul class="list-inline text-center">
+<li>名称:{{exam.name}}</li>
+<li>科目:{{exam.subject}}</li>
+<li>难度:{{exam.get_diffculty_display}}</li>
+<li>日期:{{exam.date}}</li>
+</ul>
 <form action="" method="POST">
-{% csrf_token %}
-{%for question in choicequestions %}
-	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
-    		{%for choice in question.choicequestion.choice_set.all%}
-    			{{choice.number}}:{{ choice.choice_text }}
-    		{%endfor%}
-    <p>ans:{{question.choicequestion.ans}}</p>
-    <p>mark:<input  type="text" name = {{question.id}} value={{question.mark}}></p>   
-{%endfor%}
-<input type="submit" name = 'submit' value="submit">
+    {% csrf_token %}
+    <h4>选择题:</h4>
+    {%for question in choicequestions %}
+    	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+                <ul class="list-inline">
+        		{%for choice in question.choicequestion.choice_set.all%}
+        			<li>{{choice.number}}:{{ choice.choice_text }}</li>
+        		{%endfor%}
+                </ul>
+        <p>答案:{{question.choicequestion.ans}}</p>
+        <p>分值:<input  type="text" name = 'select{{question.id}}' value={{question.mark}}></p>   
+    {%endfor%}
+    <h4>填空题:</h4>
+    {%for question in fillquestions %}
+        <p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+        <p>答案:{{question.choicequestion.ans}}</p>
+        <p>分值:<input  type="text" name = 'fill{{question.id}}' value={{question.mark}}></p>
+    {%endfor%}
+    <h4>判断题:</h4>
+    {%for question in tfquestions %}
+        <p>{{forloop.counter}}.&nbsp{{question.tfquestion.question_text}}</p>
+        <p>答案:{{question.tfquestion.ans}}</p>
+        <p>分值:<input  type="text" name = 'tf{{question.id}}' value={{question.mark}}></p>
+    {%endfor%}
+    <h4>简答题:</h4>
+    {%for question in saquestions %}
+        <p>{{forloop.counter}}.&nbsp{{question.saquestion.question_text}}</p>
+        <p>答案:{{question.saquestion.ans}}</p>
+        <p>分值:<input  type="text" name = 'sa{{question.id}}' value={{question.mark}}></p>
+    {%endfor%}
+    <button type="submit" name = 'submit' class="btn btn-primary center-block">提交</button>
 </form>
-{%comment%}
-<h2>Fill Questions:</h2>
-{%for question in fillquestions %}
-	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
-    <p>ans:{{question.choicequestion.ans}}</p>
-    <p>mark:{{question.mark}}</p>
-{%endfor%}
-{%if not SelectQuestion%}
-    <a href="/data/ExamList/">return</a>
-{%endif%}
-{%endcomment%}
+
+
 {%endblock%}
+</body>
+</html>

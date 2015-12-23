@@ -2,17 +2,17 @@
 <html>
 <head>
  <title></title>
-<!-- 新 Bootstrap 核心 CSS 文件 -->
-<link href="./css/bootstrap.min.css" rel="stylesheet">
+ <!-- 新 Bootstrap 核心 CSS 文件 -->
+ <link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- 可选的Bootstrap主题文件（一般不使用） -->
-<script src="./css/bootstrap-theme.min.css"></script>
+ <!-- 可选的Bootstrap主题文件（一般不使用） -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"></script>
 
-<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-<script src="./js/jquery.min.js"></script>
+ <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+ <script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
 
-<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-<script src="./js/bootstrap.min.js"></script>
+ <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+ <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 
 </head>
 <body>
@@ -26,71 +26,90 @@
          <h1>考试管理系统</h1>
        </div>
        <ul class="nav navbar-nav navbar-right">
-       <li class="navbar-text">{{user.username}}您以{{user.groups.all|first}}的身份登录
-       <a href="{%url 'data:Logout'%}">Logout</a></li>
-       <ul>
-      </nav>
+         <li class="navbar-text">{{user.username}}您以{%if perms.data.add_choicequestion%}教师{%else%}学生{%endif%}的身份登录
+           <a href="{%url 'data:Logout'%}">登出</a></li>
+           <ul>
+           </nav>
 
 
- <div class="row">
-   <div class="col-md-3">
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">active</h3>
-      </div>
-      <div class="panel-body">
-        <h4>question</h4>
-        <ul>
-          {%if perms.data.add_choicequestion%}
-          <li><a href="{%url 'data:get_choicequestion'%}">ChoiceQ</a></li>
-          <li><a href="{%url 'data:get_fillquestion'%}">FillQuestion</a></li>
-          {%endif%}
-          <li><a href="{%url 'data:Questionlist'%}">QuestionList</a></li>
-        </ul>
-        <h4>exam</h4>
-        <ul>
-          {%if perms.data.add_choicequestion%}
-          <li><a href="{%url 'data:AddExam'%}">AddExam</a></li>
-          {%endif%}
-          <li><a href="{%url 'data:ExamList'%}">ExamList</a></li>
-        </ul>
-        <h4>Answer&result</h4>
-        <ul>
-          <li><a href="{%url 'data:ResultList'%}">ResultList</a></li>
-          {%comment%}
-          <li><a href="{%url 'data:NewUser'%}">NewUser</a></li>
-          <li><a href="{%url 'data:Login'%}">Login</a></li>
-          <li><a href="{%url 'data:AnswerExam' 1 %}">AnswerExam</a></li>
-          {%endcomment%}
-        </ul>
-      </div>
-    </div>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">user</h3>
-      </div>
-      <div class="panel-body">
-        <ul>
-          <li><a href="{%url 'data:UserDetail' user.id%}">UserDetail</a></li>
-          <li><a href="{%url 'data:Logout'%}">Logout</a></li>
-          {%if perms.data.add_choicequestion%}
-          <li><a href="{%url 'data:TeacherUpdate'%}">TeacherUpdate</a></li>
-          {%else%}
-          <li><a href="{%url 'data:StudentUpdate'%}">StudentUpdate</a></li
-          {%endif%}
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="col-md-9">
-  {%block content%}{%endblock%}
-  </div>
+           <div class="row">
+             <div class="col-md-3">
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">active</h3>
+                </div>
+                <div class="panel-body">
+                  <h4>题目管理</h4>
+                  <ul>
+                    {%if perms.data.add_choicequestion%}
+                    <li><a href="{%url 'data:get_choicequestion'%}">选择题</a></li>
+                    <li><a href="{%url 'data:get_fillquestion'%}">填空题</a></li>
+                    <li><a href="{%url 'data:get_tfquestion'%}">判断题</a></li>
+                    <li><a href="{%url 'data:get_saquestion'%}">简答题</a></li>
+                    {%endif%}
+                    <li><a href="{%url 'data:Questionlist'%}">题目列表</a></li>
+                  </ul>
+                  <h4>考试管理</h4>
+                  <ul>
+                    {%if perms.data.add_choicequestion%}
+                    <li><a href="{%url 'data:AddExam'%}">添加考试</a></li>
+                    <li><a href="{%url 'data:NewTest'%}">新事件</li>
+                    {%endif%}
+                    <li><a href="{%url 'data:ExamList'%}">考试列表</a></li>
+                    {%if perms.data.add_choicequestion%}
+                    <li><a href="{%url 'data:TestList'%}">事件列表</a></li>
+                    {%else%}
+                    <li><a href="{%url 'data:TestLogList'%}">相关事件记录</a></li>
+                    {%endif%}
+                  </ul>
+                  <h4>考试结果</h4>
+                  <ul>
+                    <li><a href="{%url 'data:ResultList'%}">考试结果列表</a></li>
+                    {%comment%}
+                    <li><a href="{%url 'data:NewUser'%}">新用户</a></li>
+                    <li><a href="{%url 'data:Login'%}">登入</a></li>
+                    <li><a href="{%url 'data:AnswerExam' 1 %}">答卷</a></li>
+                    {%endcomment%}
+                  </ul>
+                </div>
+              </div>
+              <div class="panel panel-primary">
+                <div class="panel-heading">
+                  <h3 class="panel-title">user</h3>
+                </div>
+                <div class="panel-body">
+                  <ul>
+                    <li><a href="{%url 'data:UserDetail' user.id%}">用户信息</a></li>
+                    <li><a href="{%url 'data:Logout'%}">退出</a></li>
+                    {%if perms.data.add_choicequestion%}
+                    <li><a href="{%url 'data:TeacherUpdate'%}">教师信息更新</a></li>
+                    <li><a href="{%url 'data:StudentList'%}">学生列表</a></li>
+                    {%else%}
+                    <li><a href="{%url 'data:StudentUpdate'%}">学生信息更新</a></li>
+                    <li><a href="{%url 'data:ChooseTeacher'%}">教师选择</a></li>
+                    {%endif%}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-9">
+                <div class="panel panel-success">
+              
+                <div class="panel-body">
+                
+                {%block content%}{%endblock%}
+                </div>
+              </div>
+            </div>
 
-</div>
-</div>
-</div>
-</div>
-</div>
+
+
+         </div>
+       </div>
+     </div>
+   </div>
+ </div>
+
 
 
 </body>

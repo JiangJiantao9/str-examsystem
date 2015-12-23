@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title></title>
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- 可选的Bootstrap主题文件（一般不使用） -->
+<script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap-theme.min.css"></script>
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://apps.bdimg.com/libs/jquery/2.0.0/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<style> 
+	body{text-align:center} 
+</style>
+	{% if message == 0 %}
+	<h1 class="text-center">用户名不存在</h1>
+	{% elif message == 1 %}
+	<h1 class="text-center">用户名或密码错误</h1>
+	{% endif %}
+	<p><a href="{%url 'data:Login'%}"><button class="btn btn-large btn-primary" type="button">返回登录</button></a></p>
+</body>
+</html>
