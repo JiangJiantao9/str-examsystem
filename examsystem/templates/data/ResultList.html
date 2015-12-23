@@ -1,0 +1,24 @@
+{% extends 'data/base.html' %}
+{%block content%}
+<h1>ResultList</h1>
+<table>
+	<tr>
+		<th>counter</th>	
+		<th>exam</th>
+		<th>answer</th>
+		{%if perms.data.add_choicequestion%}
+		<th>author</th>
+		{%endif%}
+	</tr>
+	{%for answer in answers%}
+	<tr>
+		<td>{{forloop.counter}}</td>
+		<td><a href="{%url 'data:ExamDetail' answer.exam.id %}">{{answer.exam}}</td>
+		<td><a href="{%url 'data:ResultDetail' answer.id %}">answer log</td>
+		{%if perms.data.add_choicequestion%}
+		<th><a href="{%url 'data:UserDetail' answer.user.id%}">{{answer.user}}</th>
+		{%endif%}
+	</tr>
+	{%endfor%}
+</table>
+{%endblock%}

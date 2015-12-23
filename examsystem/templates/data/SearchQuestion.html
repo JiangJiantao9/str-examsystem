@@ -1,3 +1,5 @@
+{% extends 'data/base.html' %}
+{%block content%}
 <form action="" method="post">
     {% csrf_token %}
     {{ form.as_table}}
@@ -28,3 +30,4 @@
 		就这一页啦!
 	{%endfor%}
 </form>
+{%endblock%}

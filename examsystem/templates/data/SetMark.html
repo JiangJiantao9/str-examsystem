@@ -1,0 +1,32 @@
+{% extends 'data/base.html' %}
+{%block content%}
+<h1>Set Mark for Exam</h1>
+<li>name:{{exam.name}}</li>
+<li>subject:{{exam.subject}}</li>
+<li>diffculty:{{exam.get_diffculty_display}}</li>
+<li>date:{{exam.date}}</li>
+<h2>Choice Questions:</h2>
+<form action="" method="POST">
+{% csrf_token %}
+{%for question in choicequestions %}
+	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+    		{%for choice in question.choicequestion.choice_set.all%}
+    			{{choice.number}}:{{ choice.choice_text }}
+    		{%endfor%}
+    <p>ans:{{question.choicequestion.ans}}</p>
+    <p>mark:<input  type="text" name = {{question.id}} value={{question.mark}}></p>   
+{%endfor%}
+<input type="submit" name = 'submit' value="submit">
+</form>
+{%comment%}
+<h2>Fill Questions:</h2>
+{%for question in fillquestions %}
+	<p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+    <p>ans:{{question.choicequestion.ans}}</p>
+    <p>mark:{{question.mark}}</p>
+{%endfor%}
+{%if not SelectQuestion%}
+    <a href="/data/ExamList/">return</a>
+{%endif%}
+{%endcomment%}
+{%endblock%}

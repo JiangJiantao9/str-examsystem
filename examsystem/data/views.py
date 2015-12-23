@@ -2,19 +2,31 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
+from django.contrib.auth.models import User,Group
+from django.contrib.auth import authenticate,login,logout
 
 from .forms import *
 from .models import*
 
 # Create your views here.
+#setup
+'''def setup():
+
+'''
 #questions
+def HomePage(request):
+    return render(request,'data/HomePage.html')
 def get_choicequestion(request):
     if request.method == 'POST':
         form = ChoiceQuestionForm(request.POST)
         if form.is_valid():
-            question = ChoiceQuestion(question_text = form.cleaned_data['question'],ans = form.cleaned_data['ans'],
-                                diffculty = form.cleaned_data['diffculty'])
+            question = ChoiceQuestion(question_text = form.cleaned_data['question'],
+                                    ans = form.cleaned_data['ans'],
+                                    diffculty = form.cleaned_data['diffculty'],
+                                    user = request.user)
             question.save()
             point = Point.objects.get(name = form.cleaned_data['point'])
             point.choicequestions.add(question)
@@ -31,8 +43,10 @@ def get_fillquestion(request):
     if request.method == 'POST':
         form = FillQuestionForm(request.POST)
         if form.is_valid():
-            question = FillQuestion(question_text = form.cleaned_data['question'],ans = form.cleaned_data['ans'],
-                                diffculty = form.cleaned_data['diffculty'])
+            question = FillQuestion(question_text = form.cleaned_data['question'],
+                                    ans = form.cleaned_data['ans'],
+                                    diffculty = form.cleaned_data['diffculty'],
+                                    user = request.user)
             question.save()
             point = Point.objects.get(name = form.cleaned_data['point'])
             point.fillquestions.add(question)
@@ -51,6 +65,8 @@ def Questionlist(request,point = None,style = 'select'):
     else:
         if point:
             point = Point.objects.get(name = point)
+        else:
+            point = Point.objects.all()[0]
         if style == 'select':
             if point == None:
                 questions= ChoiceQuestion.objects.all()
@@ -70,48 +86,12 @@ def Questionlist(request,point = None,style = 'select'):
     except EmptyPage:
         questions = paginator.page(paginator.num_pages)
     form = SearchQuestionForm(initial = {'point':point,'style':style})
-    context = {'questions': questions,'style':style,'form':form}
+    context = {'questions': questions,
+                'style':style,
+                'form':form}
     return render(request,'data/Questionlist.html',context)
 
-'''def SearchQuestion(request,pagenum="1",style = "select",point = u"数学"):
-    questioncount = 2
-    form = SearchQuestionForm()
-    if request.method == 'POST':
-        form = SearchQuestionForm(request.POST)
-        if 'nextpage' in request.POST:
-            pagenum = int(pagenum)
-            pagenum += 1
-            return HttpResponseRedirect(reverse('data:search_question', args=(point,style,pagenum)))
-        if 'jumppage' in request.POST:
-            pagenum = request.POST['jumppage']
-            return HttpResponseRedirect(reverse('data:search_question', args=(point,style,pagenum)))
-        if form.is_valid():
-            point = form.cleaned_data['point']
-            style = form.cleaned_data['style']
-            pagenum = int(pagenum)
-            pagenum = 1
-            return HttpResponseRedirect(reverse('data:search_question', args=(point,style,pagenum)))
-    else:
-        point = Point.objects.get(name = point)
-        pagenum = int(pagenum)
-    choicequestions = point.choicequestions.all()[0+(pagenum-1)*questioncount:questioncount*pagenum]
-    fillquestions = point.fillquestions.all()[0+(pagenum-1)*questioncount:questioncount*pagenum]
-    if style  == 'select':
-        if len(point.choicequestions.all())%questioncount == 0:
-            maxpagenum = len(point.choicequestions.all())/questioncount
-        else:
-            maxpagenum = len(point.choicequestions.all())/questioncount+1
-    elif style == 'fill':
-        if len(point.choicequestions.all())%questioncount==0:
-            maxpagenum = len(point.choicequestions.all())/questioncount
-        else:
-            maxpagenum = len(point.choicequestions.all())/questioncount+1
-    pagelist = []
-    for i in range(1,maxpagenum+1):
-        pagelist.append(i)
-    context = {'form':form,'style':style,'choicequestions':choicequestions,'fillquestions':fillquestions,'pagenum':pagenum,'pagelist':pagelist}
-    return render(request,'data/SearchQuestion.html',context)'''
-#exam
+#exam_teacher
 def AddExam(request):   
     if request.method == 'POST':
         form = AddExamForm(request.POST)
@@ -121,28 +101,30 @@ def AddExam(request):
     else:
         form = AddExamForm()
     return render(request,'data/AddExam.html',{'form':form})
+
 def SelectQuestion(request,pk,point = None,style = 'select'):
     if request.method == 'POST':
         form = SearchQuestionForm(request.POST)
         if form.is_valid():
             style = form.cleaned_data['style']
             point = form.cleaned_data['point']
-            # 
-            if 'select' not in request.POST:
-                return HttpResponseRedirect(reverse('data:SelectQuestion', args=(pk,point,style)))
-            else:
-                exam = Exam.objects.get(id = pk)
-                if style == 'select':
-                    question = ChoiceQuestion.objects.get(id = request.POST['select'])
-                    temp = ChoiceQuestionDetail(exam = exam , choicequestion= question,mark = 0)
-                    temp.save()
-                elif style == 'fill':
-                    question = FillQuestion.objects.get(id = request.POST['select'])
-                    temp = FillQuestionDetail(exam = exam , choicequestion= question,mark = 0)
-                    temp.save()
+            return HttpResponseRedirect(reverse('data:SelectQuestion', args=(pk,point,style)))
+        else:
+            print request.POST
+            exam = Exam.objects.get(id = pk)
+            if style == 'select':
+                question = ChoiceQuestion.objects.get(id = request.POST['question_id'])
+                temp = ChoiceQuestionDetail(exam = exam , choicequestion= question,mark = 0)
+                temp.save()
+            elif style == 'fill':
+                question = FillQuestion.objects.get(id = request.POST['select'])
+                temp = FillQuestionDetail(exam = exam , choicequestion= question,mark = 0)
+                temp.save()
             #select question
     if point:
         point = Point.objects.get(name = point)
+    else:
+        point = Point.objects.all()[0]
     if style == 'select':
         if point == None:
             questions= ChoiceQuestion.objects.all()
@@ -161,43 +143,231 @@ def SelectQuestion(request,pk,point = None,style = 'select'):
         questions = paginator.page(1)
     except EmptyPage:
         questions = paginator.page(paginator.num_pages)
+    exam = Exam.objects.get(id = pk)
+    choicequestions = ChoiceQuestionDetail.objects.filter(exam = exam)
+    fillquestions = FillQuestionDetail.objects.filter(exam = exam)
     form = SearchQuestionForm(initial = {'point':point,'style':style})
-    context = {'questions': questions,'style':style,'SelectQuestion':True,'form':form}
+    context = {'questions': questions,
+            'style':style,
+            'SelectQuestion':True,
+            'form':form,
+            'exam':exam,
+            'choicequestions':choicequestions,
+            'fillquestions':fillquestions}
     return render(request,'data/Questionlist.html',context)
 
+def SetMark(request,pk):
+    exam = Exam.objects.get(id = pk)
+    choicequestions = ChoiceQuestionDetail.objects.filter(exam = exam)
+    fillquestions = FillQuestionDetail.objects.filter(exam = exam)
+    if request.method == 'POST':
+        if 'submit' in request.POST:
+            for question in choicequestions:
+                pos =  str(question.id)
+                question.mark = request.POST[pos]
+                question.save()
+            return  HttpResponse('success')
+        return HttpResponse('fail')
+    else:
+        return render(request,'data/SetMark.html',{'exam':exam,
+                                                'choicequestions':choicequestions,
+                                                'fillquestions':fillquestions})
 def ExamDetail(request,pk):
     exam = Exam.objects.get(id = pk)
     choicequestions = ChoiceQuestionDetail.objects.filter(exam = exam)
     fillquestions = FillQuestionDetail.objects.filter(exam = exam)
-    return render(request,'data/ExamDetail.html',{'exam':exam,'choicequestions':choicequestions,'fillquestions':fillquestions})
+    return render(request,'data/ExamDetail.html',{'exam':exam,
+                                                'choicequestions':choicequestions,
+                                                'fillquestions':fillquestions})
 
 def ExamList(request):
     exams = Exam.objects.all()
     return render(request,'data/ExamList.html',{'exams':exams})
 
+#exam_student
+def AnswerExam(request,pk):
+    exam = Exam.objects.get(id = pk)
+    choicequestions = ChoiceQuestionDetail.objects.filter(exam = exam)
+    return render(request,'data/AnswerExam.html',{'exam':exam,
+                                                'choicequestions':choicequestions})
+
+def ExamResult(request,pk):
+    if request.method ==  'POST':
+        if 'save' in request.POST:
+            exam = Exam.objects.get(id = pk)
+            choicequestions = ChoiceQuestion.objects.filter(exam = exam)
+            answer = Answer.objects.create(exam = exam,user = request.user)
+            pos = 0
+            anslist = request.session['anslist']
+            for choicequestion in choicequestions:
+                ans = ChoiceQuestionAns(answer = answer,
+                                        choicequestion = choicequestion,
+                                        ans = anslist[pos])
+                ans.save()
+                pos += 1
+                
+            return HttpResponse('success')
+        else:
+            exam = Exam.objects.get(id = pk)
+            choicequestions = ChoiceQuestionDetail.objects.filter(exam = exam)
+            anslist =  []
+            resultlist = []
+            score = 0
+            num = 0
+            for question in choicequestions:
+                pos = str(question.id)
+                if pos in request.POST:
+                    ans = request.POST[pos]
+                    anslist.append(ans)
+                    num += question.mark
+                    if ans == question.choicequestion.ans:
+                        resultlist.append('right')
+                        score += question.mark
+                        print score
+                    else:
+                        resultlist.append('false')
+                else:
+                    anslist.append('null')
+                request.session['anslist'] = anslist
+            return render(request,'data/ExamResult.html',locals())   
+
+def ResultList(request):
+    character = request.user.groups.all()[0].name
+    if character == 'student':
+         answers = Answer.objects.filter(user = request.user)
+    elif character == 'teacher':
+        answers = Answer.objects.all()
+    return render(request,'data/ResultList.html',{'answers':answers})
+def ResultDetail(request,pk):
+    answer = Answer.objects.get(id = pk)
+    choicequestions = ChoiceQuestionDetail.objects.filter(exam = answer.exam)
+    print(len(choicequestions))
+    choicequestionans = ChoiceQuestionAns.objects.filter(answer = answer)
+    anslist = []
+    resultlist = []
+    num = 0
+    score = 0
+    for ans in choicequestionans:
+        choicequestiondetail =  choicequestions.get(choicequestion = ans.choicequestion)
+        num += choicequestiondetail.mark
+        if ans.choicequestion.ans == ans.ans:
+            resultlist.append('right')
+            score += choicequestiondetail.mark
+        else:
+            resultlist.append('false')
+        anslist.append(ans.ans)
+    return render(request,'data/ResultDetail.html',{'answer':answer,
+                                                    'choicequestions':choicequestions,
+                                                    'anslist':anslist,
+                                                    'resultlist':resultlist,
+                                                    'score':score,
+                                                    'num':num})
 #users
-def StudentSignIn(request):
+def StudentUpdate(request):
     if request.method == 'POST':
         form = StudentSignInForm(request.POST)
         if form.is_valid():
-            student = Student.objects.create(name = form.cleaned_data['name'],num = form.cleaned_data['num'],
-                                   age = form.cleaned_data['age'],sex = form.cleaned_data['sex'],
-                                   birth = form.cleaned_data['birth'],college = form.cleaned_data['college'],
-                                   tel = form.cleaned_data['tel'],email = form.cleaned_data['email'])
+            student = Student.objects.filter(user = request.user.id).update(name = form.cleaned_data['name'],
+                                                                        num = form.cleaned_data['num'],
+                                                                        age = form.cleaned_data['age'],
+                                                                        sex = form.cleaned_data['sex'],
+                                                                        birth = form.cleaned_data['birth'],
+                                                                        college = form.cleaned_data['college'],
+                                                                        tel = form.cleaned_data['tel'],
+                                                                        email = form.cleaned_data['email'])
             return HttpResponse('success')
     else:      
-        form = StudentSignInForm()
-    return render(request,'data/SignIn.html',{'form':form})
+        form = StudentSignInForm(initial = {'name':request.user.username})
+    character = request.user.groups.all()[0].name
+    return render(request,'data/SignIn.html',{'form':form,'character':character})
 
-def TeacherSignIn(request):
+def TeacherUpdate(request):
     if request.method == 'POST':
         form = TeacherSignInForm(request.POST)
         if form.is_valid():
-            student = Teacher.objects.create(name = form.cleaned_data['name'],num = form.cleaned_data['num'],
-                                   age = form.cleaned_data['age'],sex = form.cleaned_data['sex'],
-                                   birth = form.cleaned_data['birth'],college = form.cleaned_data['college'],
-                                   tel = form.cleaned_data['tel'],email = form.cleaned_data['email'])
+            teacher = Teacher.objects.filter(user = request.user.id).update(name = form.cleaned_data['name'],
+                                                                        num = form.cleaned_data['num'],
+                                                                        age = form.cleaned_data['age'],
+                                                                        sex = form.cleaned_data['sex'],
+                                                                        birth = form.cleaned_data['birth'],
+                                                                        college = form.cleaned_data['college'],
+                                                                        tel = form.cleaned_data['tel'],
+                                                                        email = form.cleaned_data['email'])
             return HttpResponse('success')
-    else:      
-        form = TeacherSignInForm()
-    return render(request,'data/SignIn.html',{'form':form})
+    else:  
+        form = TeacherSignInForm(initial = {'name':request.user.username})
+    character = request.user.groups.all()[0].name
+    return render(request,'data/SignIn.html',{'form':form,'character':character})
+
+def NewUser(request):
+    if request.method == 'POST':
+        form = NewUserSignInForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(form.cleaned_data['username'],
+                                            'hori@sina.com',
+                                            form.cleaned_data['password'])
+            user.groups = [form.cleaned_data['group']] 
+        user = authenticate(username=form.cleaned_data['username'], 
+                            password=form.cleaned_data['password'])
+        login(request, user)
+        character = request.user.groups.all()[0].name
+        if character == 'student':
+            student = Student.objects.create(name = form.cleaned_data['username'],
+                                            user = request.user,)
+        elif character == 'teacher':
+            teacher = Teacher.objects.create(name = form.cleaned_data['username'],
+                                            user = request.user,)
+        return HttpResponseRedirect('/data/RegesteSuccess/')
+    else:
+        form = NewUserSignInForm()
+    return  render(request,'data/NewUser.html',{'form':form})
+
+def RegesteSuccess(request):
+    character = request.user.groups.all()[0].name
+    context = {'character':character}
+    return render(request,'data/RegesteSuccess.html',context)
+
+def Login(request):
+    if request.method == 'POST':
+        form = NewUserLoginForm(request.POST)
+        if form.is_valid():
+            user = authenticate(username=form.cleaned_data['username'], 
+                                password=form.cleaned_data['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+                    message = "User is valid, active and authenticated"
+                    return HttpResponseRedirect('/data/HomePage/')
+                else:
+                    message = "The password is valid, but the account has been disabled!"
+            else:
+                message = "The username and password were incorrect."
+            return HttpResponse(message)
+    else:
+        form = NewUserLoginForm()
+    return  render(request,'data/Login.html',{'form':form})
+
+def Logout(request):
+    logout(request)
+    return HttpResponseRedirect('/data/welcome/')
+
+def UserDetail(request,pk):
+    if not request.user.is_authenticated():
+        form = NewUserLoginForm()
+        return HttpResponseRedirect('/data/Login/')
+    user = User.objects.get(id = pk)
+    if request.user.groups.all()[0].name == 'student':
+        detail = Student.objects.get(user = request.user)
+    elif request.user.groups.all()[0].name == 'teacher':
+        detail = Teacher.objects.get(user = request.user)
+    context= {'detail':detail,'user':user}
+    return render(request,'data/UserDetail.html',context)
+
+#common views
+def welcome(request):
+    return render(request,'data/welcome.html')
+
+def HomePage(request):
+    character = request.user.groups.all()[0].name
+    print character
+    return render(request,'data/HomePage.html',{'character':character})

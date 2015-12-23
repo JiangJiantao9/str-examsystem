@@ -1,7 +1,13 @@
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p}}
-    <p></p>
-    <input type="submit" value="Submit" />
-</form>
-
+{% extends 'data/base.html' %}
+{%block content%}
+{%if perms.data.add_choicequestion%}
+	<form action="" method="post">
+	    {% csrf_token %}
+	    {{ form.as_p}}
+	    <p></p>
+	    <input type="submit" value="Submit" />
+	</form>
+{%else%}
+	only teacher permits
+{%endif%}
+{%endblock%}

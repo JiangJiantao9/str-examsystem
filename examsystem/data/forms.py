@@ -4,6 +4,7 @@ from django.forms import ModelForm
 from django.forms.widgets import CheckboxSelectMultiple
 
 from .models import *
+from django.contrib.auth.models import Group
 
 #QuestionForm
 class ChoiceQuestionForm(forms.Form):
@@ -84,3 +85,13 @@ class TeacherSignInForm(forms.Form):
 	college = forms.ChoiceField(label = 'college',choices = COLLEGE)
 	tel = forms.CharField(label = 'tel',max_length = 15,required=False)
 	email =forms.EmailField(label = 'email',required=False)
+
+class NewUserSignInForm(forms.Form):
+	username = forms.CharField(label = 'username',max_length = 30)
+	password = forms.CharField(label = 'password',max_length = 10)
+	GROUPS = (('teacher','teacher'),('student','student'))
+	group = forms.ModelChoiceField(label = 'group',queryset=Group.objects.all())
+
+class NewUserLoginForm(forms.Form):
+	username = forms.CharField(label = 'username',max_length = 30)
+	password = forms.CharField(label = 'password',max_length = 10)

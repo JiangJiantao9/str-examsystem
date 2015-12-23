@@ -1,6 +1,9 @@
-<h1>Add A New Exam</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    {{ form.as_p}}
-    <input type="submit" name ='submit' value="Submit" />
-</form>
+{% extends 'data/base.html' %}
+{%block content%}
+{%if perms.data.add_choicequestion%}
+	<h1>Add A New Exam</h1>
+	{% include 'data/CommonForm.html' %}
+{%else%}
+	only teacher permits
+{%endif%}
+{%endblock%}

@@ -1,0 +1,14 @@
+{% extends 'data/base.html' %}
+{%block content%}
+<h1>UserDetail</h1>
+<li>userid:{{user.id}}</li>
+<li>name:{{user.username}}</li>
+<li>character:{{user.groups.all|first}}</li>
+<li>num:{{detail.num}}</li>
+<li>age:{{detail.age}}</li>
+<li>sex:{{detail.sex}}</li>
+<li>birth:{{detail.birth}}</li>
+<li>cillege:{{detail.college}}</li>
+<li>tel:{{detail.tel}}</li>
+<li>email:{{detail.email}}</li>
+{%endblock%}

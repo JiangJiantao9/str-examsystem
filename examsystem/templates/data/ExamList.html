@@ -1,3 +1,5 @@
+{% extends 'data/base.html' %}
+{%block content%}
 <h1>Exam List</h1>
 <table>
 	<tr>
@@ -5,13 +7,19 @@
 		<th>subject</th>
 		<th>diffculty</th>
 		<th>date</th>
+		<th>score</th>
 	</tr>
 	{%for exam in exams%}
 	<tr>
-		<td><a href="/data/ExamDetail/{{exam.id}}/">{{exam.name}}</a></td>
+		<td><a href="{% url 'data:ExamDetail' exam.id %}">{{exam.name}}</a></td>
 		<td>{{exam.subject}}</td>
 		<td>{{exam.get_diffculty_display}}</td>
 		<td>{{exam.date}}</td>
+		<td><a href="{%url 'data:AnswerExam' exam.id %}">AnswerExam</a></td>
+		{%if perms.data.add_choicequestion%}
+		<td><a href="{%url 'data:SetMark' exam.id %}">SetMark</a></td>
+		{%endif%}
 	</tr>
 	{%endfor%}
 </table>
+{%endblock%}

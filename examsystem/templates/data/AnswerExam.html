@@ -1,0 +1,19 @@
+{% extends 'data/base.html' %}
+{%block content%}
+<li>name:{{exam.name}}</li>
+<li>subject:{{exam.subject}}</li>
+<li>diffculty:{{exam.get_diffculty_display}}</li>
+<li>date:{{exam.date}}</li>
+<form action="{%url 'data:ExamResult' exam.id%}" method="POST">
+    {% csrf_token %}
+    <h2>Choice Questions:</h2>
+    {%for question in choicequestions %}
+        <p>{{forloop.counter}}.&nbsp{{question.choicequestion.question_text}}</p>
+                {%for choice in question.choicequestion.choice_set.all%}
+                    <input type="radio" name = {{question.id}} value="{{choice.number}}">{{choice.number}}:{{ choice.choice_text }}
+                {%endfor%}
+        <p>mark:{{question.mark}}</p>
+    {%endfor%}
+    <input type="submit" name = 'submit' value="submit">
+</form>
+{%endblock%}
